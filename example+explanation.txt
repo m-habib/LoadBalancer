@@ -1,0 +1,59 @@
+%% make sure you are using OTP 21.2. and later.
+%% Compile the modules
+c(loadBalancer).
+c(server_).
+c(supervisor_).
+
+%% Start the servers
+loadBalancer:startServers().
+%% Three servers are running now, named server1/2/3. check
+%% this using i() function in your shell.
+
+F1 = fun()-> timer:sleep(40000) end.
+loadBalancer:calcOnServer(self(), F1, make_ref()).
+%% after 40 seconds, your shell should receive a message says: {5, SomeRef}
+%% check that using flush() in your shell.
+
+%% before 40 seconds passes, run:
+loadBalancer:numberOfRunningFunctions(1).
+loadBalancer:numberOfRunningFunctions(2).
+loadBalancer:numberOfRunningFunctions(3).
+%% and you should get 1 in the first call, and 0 in the the second and third.
+
+%% before 40 seconds passes, run:
+F2 = fun()-> timer:sleep(80000) end.
+F3 = fun()-> timer:sleep(80000) end.
+F4 = fun()-> timer:sleep(10000) end.
+loadBalancer:calcOnServer(self(), F2, make_ref()).
+loadBalancer:calcOnServer(self(), F3, make_ref()).
+loadBalancer:calcOnServer(self(), F4, make_ref()).
+
+%% and then (after less than 10 seconds passes from the third call):
+loadBalancer:numberOfRunningFunctions(1).
+loadBalancer:numberOfRunningFunctions(2).
+loadBalancer:numberOfRunningFunctions(3).
+%% now you should get 2 for the first call, and 1 for the others, and 
+%% that that is because of the load balancer. if you call these three
+%% functions again after 40 < T < 80 seconds, you should get 0 for 
+%% server_1 (because F1 and F4 finished after 40 seconds), and 1 for 
+%% server_2 and server_3. and if called after 80 seconds, you should
+%% get 0 from all the three calls.
+
+%% if you calculate a buggy function on the server that leads for a
+%% server crash, the supervisor should restart the server automatically.
+%% this will not affect already running functions on the server.
+%% try this:
+i().
+%% and remember the PID of the running servers (server1/2/3).
+F_Buggy = fun()-> 1/0 end.
+loadBalancer:calcOnServer(self(), F_Buggy, make_ref()).
+i().
+%% you should see a different PIDs for one of the servers, and that
+%% is because the supervisor restarted the server. if we change the
+%% restart strategy from one_for_one to one_for_all (line 25 in
+%% supervisor_), and one server terminates and is to be restarted, 
+%% all other servers processes are terminated and then all servers
+%% processes are restarted.
+
+%% Good Luck :) 
+
