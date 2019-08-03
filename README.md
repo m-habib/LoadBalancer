@@ -6,11 +6,11 @@ Load-balanced supervised servers for calculating client's functions.<br/><br/>
 <img src="lb_image.jpg" width="50%" height="50%">
 </p>
 
-In this example, I implemented a simple load balancer with 3 supervised servers.  For simplicity, the servers will run on a shared Node. 
-Each server receives a function from the load balancer, runs it and sends the result to client's PID. Each server can also run multiple functions from multiple clients simultaneously.  
+In this example, I implemented a simple load balancer with 3 supervised servers.  For simplicity, the servers will run on a single shared Node. 
+Each server receives a function from the load balancer, runs it and sends the result to the client. Each server can also run multiple functions from multiple clients simultaneously.  
 I used Erlang's gen_server and supervisor modules to implement the servers.
 
-**System's API:**  
+**System API:**  
   &nbsp;&nbsp;&nbsp;- startServers:  
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Starts and registers 3 servers and a supervisor.  
   &nbsp;&nbsp;&nbsp;- stopServers:  
