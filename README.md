@@ -16,12 +16,12 @@ I used Erlang's gen_server and supervisor modules to implement the servers.
   &nbsp;&nbsp;&nbsp;- stopServers:  
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stops the servers and the supervisor.  
   &nbsp;&nbsp;&nbsp;- calcOnServer:  
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs the function Fun on one of the servers.  
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs a given function on one of the servers.  
   &nbsp;&nbsp;&nbsp;- numberOfRunningFunctions:  
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of running functions on server number <Server_num>.  
   
   
 **Restart strategy:**  
-&nbsp;&nbsp;&nbsp;one_for_one: If a client's functions caused the server to crash, process terminates, only that server is restarted.</br></br>
+&nbsp;&nbsp;&nbsp;one_for_one: If a server crashes or a client's function caused it to crash, only that server is restarted.</br></br>
 
 For more info and an example, please view [this](example+explanation.txt) file.
